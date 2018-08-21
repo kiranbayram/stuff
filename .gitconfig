@@ -1,0 +1,23 @@
+[user]
+	name = Bayram Kiran
+	email = bayram.kiran@scout24.com
+[core]
+	excludesfile = /Users/bkiran/.gitignore_global
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+
+[alias]
+	b = branch
+	ch = checkout
+	s = status
+	a = add
+	c = commit
+	f = fetch
+	puf = push --force-with-lease
+	pushup = push --set-upstream origin HEAD
+	l = log --graph --oneline
+	refresh = !git stash && git checkout master && git pull
