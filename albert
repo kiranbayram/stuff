@@ -35,14 +35,24 @@ add_timeout_to_jenkinsfile(){
 	fi
 }
 
+use_invoked_build_number(){
+	gsed -i "s;.*GO_PIPELINE_LABEL.*;    INVOKED_BUILD_NUMBER=getInvokedBuildNumber()\n    GO_PIPELINE_LABEL=\"\${INVOKED_BUILD_NUMBER}-\${BRANCH_NAME}\";" Jenkinsfile
+	
+	gsed -i "/.*disableConcurrentBuilds.*/a\\\n    preserveStashes(buildCount: 5)" Jenkinsfile
+}
+
 # filter out repos our team is not admin of; otherwise, e.g. security-configuration would appear in the list as of now (2017-12)
 REPO_NAME_FILTER="map(select(.permissions.admin == true)) | map(.name) | .[]"
 
 REPO_NAMES=`http GET "https://api.github.com/teams/$TEAM_ID/repos?per_page=100&access_token=$ACCESS_TOKEN" | jq -r "$REPO_NAME_FILTER" | sort`
 
 for REPO in $REPO_NAMES; do
-	echo $REPO
+	echo "=====$REPO====="
 	cd ~/git/$REPO
+	if [ $? -ne 0 ]; then
+		git clone git@github.com:Scout24/$REPO.git
+		cd $REPO
+	fi
 
 	if [ -f Jenkinsfile ]; then
 
@@ -50,7 +60,7 @@ for REPO in $REPO_NAMES; do
 			git checkout master
 			git pull
 
-			add_timeout_to_jenkinsfile
+			use_invoked_build_number
 
 			git diff
 
@@ -59,11 +69,15 @@ for REPO in $REPO_NAMES; do
 
 			if [[ $REPLY =~ ^[Yy]$ ]]
 			then
-				git commit -am "Add timeout for approval step"
+				git commit -am "Use invoked build number"
 				git push
+			else
+				git stash
 			fi
 
 	fi
+
+	cd ~/git
 
     continue
 done;
