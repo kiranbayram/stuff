@@ -15,6 +15,7 @@
 	ch = checkout
 	s = status
 	a = add
+	aa = add -A
 	c = commit
 	f = fetch
 	puf = push --force-with-lease
