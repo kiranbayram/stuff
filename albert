@@ -41,6 +41,8 @@ use_invoked_build_number(){
 	gsed -i "/.*disableConcurrentBuilds.*/a\\\n    preserveStashes(buildCount: 5)" Jenkinsfile
 }
 
+TEAMS=`http GET "https://api.github.com/orgs/Scout24/teams?access_token=$ACCESS_TOKEN"`
+
 # filter out repos our team is not admin of; otherwise, e.g. security-configuration would appear in the list as of now (2017-12)
 REPO_NAME_FILTER="map(select(.permissions.admin == true)) | map(.name) | .[]"
 
