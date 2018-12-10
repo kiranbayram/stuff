@@ -1,0 +1,30 @@
+#!/bin/bash
+
+fix_usecase(){
+	grep -q "^usecase:" metadata.yaml && sed -i '' "s/.*usecase.*/usecase: \"$REPO\"/" metadata.yaml || 
+	printf "\nusecase: \"$REPO\"" >> metadata.yaml
+}
+
+fix_repo_url(){
+	grep -q "^repository_url:" metadata.yaml
+	if [ $? -eq 0 ]
+	then	
+		sed -i '' "s;.*repository_url.*;repository_url: \"https://github.com/Scout24/$REPO\";" metadata.yaml
+	else 
+		printf "\nrepository_url: \"https://github.com/Scout24/$REPO\"" >> metadata.yaml
+	fi
+}
+
+add_timeout_to_jenkinsfile(){
+	grep -q "Continue?" Jenkinsfile
+	if [ $? -eq 0 ]
+	then	
+		sed -i '' "s;.*Continue?.*;        timeout(time: 1, unit: 'HOURS') { input 'Continue?' };" Jenkinsfile
+	fi
+}
+
+use_invoked_build_number(){
+	gsed -i "s;.*GO_PIPELINE_LABEL.*;    INVOKED_BUILD_NUMBER=getInvokedBuildNumber()\n    GO_PIPELINE_LABEL=\"\${INVOKED_BUILD_NUMBER}-\${BRANCH_NAME}\";" Jenkinsfile
+	
+	gsed -i "/.*disableConcurrentBuilds.*/a\\\n    preserveStashes(buildCount: 5)" Jenkinsfile
+}
