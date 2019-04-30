@@ -2,7 +2,7 @@
 	name = kiranbayram
 	email = kiranbayram@gmail.com
 [core]
-	excludesfile = /Users/bkiran/.gitignore_global
+	excludesfile = ~/.gitignore_global
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
