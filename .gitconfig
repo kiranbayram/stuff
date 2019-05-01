@@ -3,13 +3,7 @@
 	email = kiranbayram@gmail.com
 [core]
 	excludesfile = ~/.gitignore_global
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-
+	editor = vim
 [alias]
 	b = branch
 	ch = checkout
@@ -26,3 +20,5 @@
 	l = log --graph --oneline
 	refresh = !git stash && git ch master && git pull
 	refresh-fork = !git stash && git ch master && git f upstream && git r upstream/master && git puf
+	rau = remote add upstream
+	remotev = remote -v
