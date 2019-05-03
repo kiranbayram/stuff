@@ -8,6 +8,7 @@
 [alias]
 	b = branch
 	ch = checkout
+	chb = checkout -b
 	s = status
 	a = add
 	aa = add -A
@@ -21,5 +22,6 @@
 	l = log --graph --oneline
 	refresh = !git stash && git ch master && git pull
 	refresh-fork = !git stash && git ch master && git f upstream && git r upstream/master && git puf
+	candidate = "!f() { git push --force-with-lease origin \"${1:-HEAD}:candidate\"; };f"
 	rau = remote add upstream
 	remotev = remote -v
