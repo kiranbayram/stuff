@@ -16,6 +16,11 @@ source ~/git-completion.bash
 source ~/.profile
 source ~/.rvm/scripts/rvm
 
+export JAVA_HOME=$(/usr/libexec/java_home)
+rm -f ~/java_home
+ln -s "$JAVA_HOME" ~/java_home
+
+
 aws_login () { 
     eval "$(scloud account login -e "$1" "$2")"
 }
@@ -43,28 +48,37 @@ clone(){
 	cd $1
 }
 
+clonefork(){
+	cd ~/git
+	git clone git@github.com:kiranbayram/$1.git
+	cd $1
+	git remote add upstream git@github.com:Scout24/$1.git
+	git remote -v
+}
+
 run-slice-in-jigsaw(){
-	cd ~/git/jigsaw-docker
-	scloud-dr
-	./run.sh financeslice_detail 9000
+	cd ~/git/jigsaw
+	./run_local.sh financeslice_detail 9000
+}
+
+run-classified-detail-in-jigsaw(){
+	cd ~/git/jigsaw
+	./run_local.sh classifieddetail 9000
 }
 
 run-pages-in-jigsaw(){
-	cd ~/git/jigsaw-docker
-	scloud-dr
-	./run.sh finance_pages 9000
+	cd ~/git/jigsaw
+	./run_local.sh finance_pages 9000
 }
 
 run-afterlead-in-jigsaw(){
-	cd ~/git/jigsaw-docker
-	scloud-dr
-	./run.sh finance_afterlead 9000
+	cd ~/git/jigsaw
+	./run_local.sh finance_afterlead 9000
 }
 
 run-autopos-in-jigsaw(){
-	cd ~/git/jigsaw-docker
-	scloud-dr
-	./run.sh finance_autopos 9000
+	cd ~/git/jigsaw
+	./run_local.sh finance_autopos 9000
 }
 
 grepr(){
