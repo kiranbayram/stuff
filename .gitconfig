@@ -16,6 +16,7 @@
 	f = fetch
 	r = rebase
 	ri = rebase -i
+	reseth = reset --hard
 	del = "!f() { git b -d \"$1\" ; git push origin --delete \"$1\"; }; f"
 	puf = push --force-with-lease
 	pushup = push --set-upstream origin HEAD
