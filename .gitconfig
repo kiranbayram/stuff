@@ -7,22 +7,28 @@
 	commentChar = ";"
 [alias]
 	b = branch
+	ba = branch -a
+	bd = branch -d
+	bD = branch -D
 	ch = checkout
 	chb = checkout -b
 	s = status
 	a = add
 	aa = add -A
 	c = commit
+	cm = commit -m
 	f = fetch
 	r = rebase
 	ri = rebase -i
 	reseth = reset --hard
-	del = "!f() { git b -d \"$1\" ; git push origin --delete \"$1\"; }; f"
+	del = "!f() { git ch master; git b -d \"$1\"; git push origin --delete \"$1\"; }; f"
+	p = push
 	puf = push --force-with-lease
 	pushup = push --set-upstream origin HEAD
-	l = log --graph --oneline
-	refresh = !git stash && git ch master && git pull
+	l = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
+	refresh = !git stash && git ch master && git pull --prune
 	refresh-fork = !git stash && git ch master && git f upstream && git r upstream/master && git puf
 	candidate = "!f() { git push --force-with-lease origin \"${1:-HEAD}:candidate\"; };f"
 	rau = remote add upstream
 	remotev = remote -v
+	undo = reset HEAD~1 --mixed
