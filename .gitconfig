@@ -21,7 +21,7 @@
 	r = rebase
 	ri = rebase -i
 	reseth = reset --hard
-	del = "!f() { git ch master; git b -d \"$1\"; git push origin --delete \"$1\"; }; f"
+	del = "!f() { git f; git ch master; git b -d \"$1\"; git push origin --delete \"$1\"; }; f"
 	p = push
 	puf = push --force-with-lease
 	pushup = push --set-upstream origin HEAD
