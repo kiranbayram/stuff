@@ -5,6 +5,14 @@
 	excludesfile = ~/.gitignore_global
 	editor = vim
 	commentChar = ";"
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
 	b = branch
 	ba = branch -a
@@ -32,3 +40,5 @@
 	rau = remote add upstream
 	remotev = remote -v
 	undo = reset HEAD~1 --mixed
+[pager]
+	branch = false
