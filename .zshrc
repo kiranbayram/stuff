@@ -161,12 +161,20 @@ alias scloud-pr='aws_login as24prod ReadOnlyAccess'
 alias scloud-pp='aws_login as24prod PowerUserAccess'
 alias scloud-tr='aws_login as24tools ReadOnlyAccess'
 alias scloud-tp='aws_login as24tools PowerUserAccess'
+alias scloud-playr='aws_login s24-playground ReadOnlyAccess'
+alias scloud-playp='aws_login s24-playground PowerUserAccess'
+alias scloud-searchr='aws_login as24-search-funnel ReadOnlyAccess'
+alias scloud-searchp='aws_login as24-search-funnel PowerUserAccess'
 
 alias delete-local-branches="git branch | grep -v "master" | xargs git branch -d"
 alias force-delete-local-branches="git branch | grep -v "master" | xargs git branch -D"
 
+mygroups(){
+	ldapsearch -x -W -LLL -h gs24.com -b 'OU=users,OU=gs24,DC=gs24,DC=com' -D 'bayram.kiran@scout24.com' "(sAMAccountName=$USER)" memberof | grep -- '-RO-' | awk -F '[=,]' '{print $2}'
+}
+
 goto(){
-	tmp="$(find ~/git -maxdepth 1 -type d | grep "$1" | head -n 1)"
+	tmp="$(find ~/git -maxdepth 1 -type d | grep "$1" | tail -n 1)"
 	cd $tmp
 }
 
