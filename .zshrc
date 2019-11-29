@@ -138,15 +138,28 @@ source $ZSH/oh-my-zsh.sh
 ### BASH PROFILE STUFF
 
 export AWS_DEFAULT_REGION=eu-west-1
-export ACCESS_TOKEN="insert-github-access-token here"
 export EDITOR=vim
 
-export NVM_DIR=~/.nvm
-source $NVM_DIR/nvm.sh
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+PATH="$PATH:/Users/bkiran/Library/Python/2.7/bin"
+
+# change the next 3 variables to your personal settings
+export FAST_TOKEN=TODO
+export FAST_USER=bkiran
+export FAST_EMAIL=bayram.kiran@scout24.com
+# you can skip the following line if you are not using npm
+export FAST_HTTPAUTH=$(python -c "import os; import base64; import sys; sys.stdout.write(base64.b64encode(str.encode('%s:%s' % (os.environ.get('FAST_USER'), os.environ.get('FAST_TOKEN')))).decode())")
 
 ### SCLOUD - shell integration
 command -v scloud >/dev/null 2>&1 && eval "$(scloud --shell zsh)"
 ### SCLOUD
+
+# export JAVA_HOME=$(/usr/libexec/java_home)
+# rm -f ~/java_home
+# ln -s "$JAVA_HOME" ~/java_home
 
 aws_login() { 
     eval "$(scloud account login -e "$1" "$2")"
@@ -168,6 +181,9 @@ alias scloud-searchp='aws_login as24-search-funnel PowerUserAccess'
 
 alias delete-local-branches="git branch | grep -v "master" | xargs git branch -d"
 alias force-delete-local-branches="git branch | grep -v "master" | xargs git branch -D"
+
+alias kms-decrypt='base64 --decode | aws kms decrypt --ciphertext-blob fileb:///dev/stdin --output text --query Plaintext | base64 --decode'
+alias kms-encrypt-as24-search-funnel='aws kms encrypt --key-id '\''alias/deployment'\'' --plaintext fileb:///dev/stdin --output text --query CiphertextBlob'
 
 mygroups(){
 	ldapsearch -x -W -LLL -h gs24.com -b 'OU=users,OU=gs24,DC=gs24,DC=com' -D 'bayram.kiran@scout24.com' "(sAMAccountName=$USER)" memberof | grep -- '-RO-' | awk -F '[=,]' '{print $2}'
@@ -192,37 +208,12 @@ clonefork(){
 	git remote -v
 }
 
-run-slice-in-jigsaw(){
-	cd ~/git/jigsaw
-	./run_local.sh financeslice_detail 9000
+
+nvm_setup(){
+	export NVM_DIR=~/.nvm
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 }
-
-run-classified-detail-in-jigsaw(){
-	cd ~/git/jigsaw
-	./run_local.sh classifieddetail 9000
-}
-
-run-pages-in-jigsaw(){
-	cd ~/git/jigsaw
-	./run_local.sh finance_pages 9000
-}
-
-run-afterlead-in-jigsaw(){
-	cd ~/git/jigsaw
-	./run_local.sh finance_afterlead 9000
-}
-
-run-autopos-in-jigsaw(){
-	cd ~/git/jigsaw
-	./run_local.sh finance_autopos 9000
-}
-
-PATH="$PATH:/Users/bkiran/Library/Python/2.7/bin"
-
-autoload bashcompinit
-bashcompinit
-source ~/git/albert/bash_completion
-alias albert="~/git/albert/albert"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
@@ -230,3 +221,8 @@ alias albert="~/git/albert/albert"
 prompt_scloud() { p9k_prompt_segment -t "$(__scloud_ps1 | sed -e 's/[[:space:]]*$//')" }
 typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(scloud $POWERLEVEL9K_LEFT_PROMPT_ELEMENTS)
 
+
+autoload bashcompinit
+bashcompinit
+source /Users/bkiran/git/albert/bash_completion
+alias albert="/Users/bkiran/git/albert/albert"
