@@ -5,6 +5,14 @@
 	excludesfile = ~/.gitignore_global
 	editor = vim
 	commentChar = ";"
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
 	b = branch
 	ba = branch -a
@@ -27,8 +35,11 @@
 	pushup = push --set-upstream origin HEAD
 	l = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
 	refresh = !git stash && git ch master && git pull --prune
-	refresh-fork = !git stash && git ch master && git f upstream && git r upstream/master && git puf
+	fork-refresh = !git stash && git ch master && git f upstream && git r upstream/master && git puf
 	candidate = "!f() { git push --force-with-lease origin \"${1:-HEAD}:candidate\"; };f"
 	rau = remote add upstream
 	remotev = remote -v
 	undo = reset HEAD~1 --mixed
+[pager]
+	branch = false
+	diff = false
