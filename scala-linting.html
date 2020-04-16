@@ -39,6 +39,8 @@ Array(1) == Array(1) //this returns false, use sameElements instead
 
 ```scala
 def someRate(occurence: Int, total: Int): Double = occurence / total
+
+someRate(10, 100)   // returns 0.0
 ```
 
 **Solution:** `-Wnumeric-widen`
@@ -158,6 +160,12 @@ For compiler warnings, to disable a file or folder:
 scalacOptions += "-P:silencer:pathFilters=app/SomeFile.scala"
 scalacOptions += "-P:silencer:pathFilters=app/some_folder"
 ```
+---
+class:  center, middle
+
+## Thank you for listening :)
+
+## Any questions?
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
