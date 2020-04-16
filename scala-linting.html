@@ -20,6 +20,12 @@
           font-size: 16px;
           border-radius: 2px;
           }
+
+          .footnote {
+            margin-top: 100px;
+            font-size: 18px;
+            opacity: 0.7;
+          }
     </style>
   </head>
   <body>
@@ -28,90 +34,109 @@
 class: center, middle
 
 # Scala Linting at AS24
+
+.footnote[
+Bayram Kiran
+
+Senior Software Engineer @ Cxp Engagement Web
+]
+
 ---
-## Detect possible bugs at compile time
-```scala
-Array(1) == Array(1) //this returns false, use sameElements instead
-```
-**Solution:** `WartRemover#ArrayEquals`
-<hr/>
---
+## Prevent using operations which throw exceptions
+
+`Option#get` throws an exception when the value is None
 
 ```scala
-def someRate(occurence: Int, total: Int): Double = occurence / total
+@ val name: Option[String] = None
+name: Option[String] = None
 
-someRate(10, 100)   // returns 0.0
+@ name.get
+java.util.NoSuchElementException: None.get
+  scala.None$.get(Option.scala:627)
+  scala.None$.get(Option.scala:626)
+  ammonite.$sess.cmd19$.<clinit>(cmd19.sc:1)
 ```
+**Detect with:** `WartRemover#OptionPartial`
 
-**Solution:** `-Wnumeric-widen`
-
-<hr/>
---
-Do not use `+` function to concatenate strings
-```scala
-Some("foo") + "bar" //returns "Some(foo)bar"
-Set("foo") + "bar"  //returns Set("foo", "bar")
-```
-**Solution:** `WartRemover#StringPlusAny`
-<hr/>
---
-
-```scala
-val abc = "this is ${result.code}"
-```
-**Solution:** `-Xlint:missing-interpolator`
 ---
-## Prevent using operations which will throw exceptions
+
+## Prevent using operations which throw exceptions
+
 ```scala
-Option#get //throws an exception when the value is None
+@ val names: List[String] = List.empty
+names: List[String] = List()
+
+@ names.head
+java.util.NoSuchElementException: head of empty list
+  scala.collection.immutable.Nil$.head(List.scala:592)
+  scala.collection.immutable.Nil$.head(List.scala:591)
+  ammonite.$sess.cmd21$.<clinit>(cmd21.sc:1)
 ```
-**Solution:** `WartRemover#OptionPartial`
-<hr/>
+
 --
+
 `scala.collection.Traversable` has a lot of methods like:
 ```scala
 Traversable#(head, tail, last, reduce, reduceLeft, min, max, minBy, maxBy, ...)
 ```
 which will throw exception when the collection is empty<br/>
-**Solution:** `WartRemover#TraversableOps`
+**Detect with:** `WartRemover#TraversableOps`
+<hr/>
+
+--
+
+**And more:** `Try#get`, `Either#LeftProjection#get`, `Either#RightProjection#get`, `asInstanceOf`
+
+---
+
+## Detect possible bugs at compile time
+
+```scala
+@ def rate(occurrence: Int, total: Int): Double = occurrence / total
+defined function rate
+
+@ rate(10, 100)
+res0: Double = 0.0
+```
+
+**Detect with:** `-Wnumeric-widen`
+
 <hr/>
 --
 
 ```scala
-5.asInstanceOf[String] //compiles but fails in runtime
+Array(1) == Array(1) //this returns false, use sameElements instead
 ```
-**Solution:** `WartRemover#AsInstanceOf`
+**Detect with:** `WartRemover#ArrayEquals`
 <hr/>
 --
-**And more:** `Try#get`, `Either#LeftProjection#get`, `Either#RightProjection#get`
 
----
-
-## Encourage FP style
-
-- no vars
-- no mutable collections
-- no return
-- no throw
-- no null
-
+Do not use `+` function to concatenate strings
+```scala
+Some("foo") + "bar" //returns "Some(foo)bar"
+Set("foo") + "bar"  //returns Set("foo", "bar")
+```
+**Detect with:** `WartRemover#StringPlusAny`
 ---
 
 ## Keep your codebase clean and up-to-date
 `-Wdead-code`<br>
 Warn when dead code is identified.
+<hr/>
 
 `-opt:unreachable-code`<br>
 Eliminate unreachable code, exception handlers guarding no instructions, redundant metadata (debug information, line numbers).
+<hr/>
 
 `-Xlint:unused`<br>
 Enable -Wunused:imports,privates,locals,implicits.
+<hr/>
 
 `-Xlint:deprecation`<br>
 Emit warning and location for usages of deprecated APIs
 ---
 ## How to use?
-We have already setup `ScoutLintingPlugin` and `ScoutWartRemoverPlugin` (since v0.2.1) in `sbt-scalascout` with a default set of flags/rules.
+We have already setup `ScoutLintingPlugin` (provides compiler flags) and `ScoutWartRemoverPlugin` (since v0.2.1) in `sbt-scalascout` with a default set of flags/rules.
 --
 
 1. Add `sbt-scalascout` dependency to your `plugins.sbt` file:
@@ -133,6 +158,7 @@ That's it, you're ready to go! :)
 **P.S.** Both plugins are enabled for all `scala` branches in `as24-project-template`
 ---
 ## How to disable warnings
+--
 
 For WartRemover, to disable a single line:
 ```scala
