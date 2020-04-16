@@ -35,17 +35,25 @@ Array(1) == Array(1) //this returns false, use sameElements instead
 ```
 **Solution:** `WartRemover#ArrayEquals`
 <hr/>
-Non-tail recursive functions that call themselves too often end up throwing `StackOverflowError` at runtime. 
+--
 
-**Solution:** `WartRemover#Recursion` (enforces it to be written with tail recursion)
+```scala
+def someRate(occurence: Int, total: Int): Double = occurence / total
+```
+
+**Solution:** `-Wnumeric-widen`
+
 <hr/>
+--
 Do not use `+` function to concatenate strings
 ```scala
-List("foo") + "bar"
-res0: String = "List(foo)bar"
+Some("foo") + "bar" //returns "Some(foo)bar"
+Set("foo") + "bar"  //returns Set("foo", "bar")
 ```
 **Solution:** `WartRemover#StringPlusAny`
 <hr/>
+--
+
 ```scala
 val abc = "this is ${result.code}"
 ```
@@ -56,22 +64,27 @@ val abc = "this is ${result.code}"
 Option#get //throws an exception when the value is None
 ```
 **Solution:** `WartRemover#OptionPartial`
-- - - -
+<hr/>
+--
 `scala.collection.Traversable` has a lot of methods like:
 ```scala
 Traversable#(head, tail, last, reduce, reduceLeft, min, max, minBy, maxBy, ...)
 ```
 which will throw exception when the collection is empty<br/>
-**Solution:** `WartRemover#TraversableOps`<hr/>
+**Solution:** `WartRemover#TraversableOps`
+<hr/>
+--
 
 ```scala
 5.asInstanceOf[String] //compiles but fails in runtime
 ```
-**Solution:** `WartRemover#AsInstanceOf`concatenate
+**Solution:** `WartRemover#AsInstanceOf`
 <hr/>
+--
 **And more:** `Try#get`, `Either#LeftProjection#get`, `Either#RightProjection#get`
 
 ---
+
 ## Encourage FP style
 
 - no vars
@@ -79,10 +92,11 @@ which will throw exception when the collection is empty<br/>
 - no return
 - no throw
 - no null
-___
+
+---
 
 ## Keep your codebase clean and up-to-date
-`-Ywarn-dead-code` or `-Wdead-code`<br>
+`-Wdead-code`<br>
 Warn when dead code is identified.
 
 `-opt:unreachable-code`<br>
@@ -91,22 +105,26 @@ Eliminate unreachable code, exception handlers guarding no instructions, redunda
 `-Xlint:unused`<br>
 Enable -Wunused:imports,privates,locals,implicits.
 
-`-deprecation` or `-Xlint:deprecation`<br>
+`-Xlint:deprecation`<br>
 Emit warning and location for usages of deprecated APIs
 ---
 ## How to use?
 We have already setup `ScoutLintingPlugin` and `ScoutWartRemoverPlugin` (since v0.2.1) in `sbt-scalascout` with a default set of flags/rules.
+--
 
 1. Add `sbt-scalascout` dependency to your `plugins.sbt` file:
 ```scala
 addSbtPlugin("com.autoscout24" % "sbt-scalascout" % "0.2.2")
 ```
+--
+
 2. Enable the plugins in your `build.sbt` file like:
 ```scala
 lazy val root = project
   .in(file("."))
   .enablePlugins(ScoutLintingPlugin, ScoutWartRemoverPlugin)
 ```
+--
 
 That's it, you're ready to go! :)
 
@@ -126,6 +144,9 @@ For compiler warnings, to disable a single line:
 val abc = "this is ${result.code}"
 ```
 <hr/>
+
+--
+
 For WartRemover, to disable a file or folder:
 ```scala
 wartremoverExcluded += baseDirectory.value / "app" / "SomeFile.scala"
