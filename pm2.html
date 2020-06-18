@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Why/How we used pm2 to run our SSR node server</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      img {
+        width: 93%;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-inline-code { 
+          background-color: #F0F0F0;
+          padding: 4px;
+          font-size: 16px;
+          border-radius: 2px;
+          }
+
+          .footnote {
+            margin-top: 100px;
+            font-size: 18px;
+            opacity: 0.7;
+          }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Why/How we used pm2 to run our SSR node server
+
+.footnote[
+Bayram Kiran
+
+Software Engineer @ UES Connect Web
+]
+
+---
+## What is pm2?
+
+--
+
+- A **daemon process manager** that will help you manage and keep your node.js apps online 24/7
+--
+<br>
+<br>
+- Has a **cluster mode** which starts multiple processes and load-balances requests between them
+--
+<br>
+<br>
+- Has **docker** support
+--
+<br>
+<br>
+- Handles **log management**
+--
+<br>
+<br>
+- Provides a lot of different **monitoring** options
+--
+<br>
+<br>
+- Open source
+
+---
+
+## Why to use pm2?
+
+#### Cluster mode: [doc](https://pm2.keymetrics.io/docs/usage/cluster-mode/) - [alternative](https://github.com/AutoScout24/classified-list/blob/b5fd3ff8c2881c024cadfb7b04c55c5f1c6009f1/deploy/stack.yaml#L365)
+
+![Default-aligned image](http://i.imgur.com/kTAowsL.png)
+
+-  Under the hood, this uses the Node.js cluster module such that the scaled application’s child processes can automatically share server ports
+
+---
+
+## Create a config file
+
+We created a config file `ecosystem.config.js` under `deploy/pm2` folder
+
+```js
+module.exports = [
+    {
+        script: './conf/javascripts/reactNodeServer.min.js',
+        name: 'ssr-service',
+        env: {
+            NODE_ENV: 'production',
+            PORT: 3001
+        },
+        exec_mode: 'cluster',
+        instances: 'max',
+    },
+]
+```
+
+https://pm2.keymetrics.io/docs/usage/application-declaration/
+
+---
+
+## Put new pm2 folder content to the server
+
+We include this new pm2 folder to the server by adding the line below to the `build.sbt`
+
+```scala
+mappings in Universal ++= directory("deploy/pm2")
+```
+
+---
+
+## install and start pm2
+We add the two steps below in `stack.yaml`
+
+```
+b1_install_pm2:
+  command: npm install pm2 -g
+```
+
+```
+b2_start_ssr_backend:
+  command: runuser -l @Service -c 'pm2 start pm2/ecosystem.config.js'
+```
+
+
+---
+
+## Send error logs to Kibana
+
+```
+<source>
+  type tail
+  format none
+  path /@Service-@Version/.pm2/logs/ssr-service-error*
+  pos_file /tmp/pm2-error-logs.POS
+  rotate_wait 1
+  refresh_interval 5
+  tag pm2-error-logs
+  read_from_head true
+</source>
+
+<match pm2-error-logs>
+  type record_reformer
+
+  meta.name pm2-error-logs
+  meta.hostname ${hostname}
+  meta.timestamp ${time.strftime('%Y-%m-%dT%H:%M:%S%z')}
+  meta.stackname "#{ENV['STACKNAME']}"
+  instanceId "#{ENV['INSTANCE_ID']}"
+  meta.version @{Version}
+  file "react-node-server"
+  source "application"
+
+  tag pm2-error-logs-enhanced
+</match>
+```
+
+---
+
+## Send error logs to Kibana
+
+![kibana](https://user-images.githubusercontent.com/3471570/80980097-86d28100-8e28-11ea-8a4a-26f9d0a6a064.png)
+
+---
+class:  center, middle
+
+## Thank you for your attention :)
+
+## Any questions?
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
