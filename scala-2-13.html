@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Scala 2.13</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      img {
+        width: 93%;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-inline-code { 
+          background-color: #F0F0F0;
+          padding: 4px;
+          font-size: 16px;
+          border-radius: 2px;
+          }
+
+          .footnote {
+            margin-top: 100px;
+            font-size: 18px;
+            opacity: 0.7;
+          }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Scala 2.13: What's new?
+
+.footnote[
+Bayram Kiran
+
+Software Engineer @ UES Connect Web
+]
+
+---
+## Collections
+
+#### Standard library collections have been [overhauled](https://github.com/scala/scala/releases/tag/v2.13.0) for simplicity, performance, and safety
+--
+
+- **New, faster HashMap/Set implementations**
+  - Based on [Compressed Hash-Array Mapped Prefix-trees (CHAMP)](https://michael.steindorfer.name/publications/oopsla15.pdf)
+  - CHAMP data structures significantly lower memory footprints and significantly [improve](https://github.com/scala/collection-strawman/issues/192#issuecomment-326687492) all iteration-based operations and equality checks
+  - Basic operations such as lookup, insertion, and deletion may slow down
+--
+
+<br>
+- [immutable.LazyList](https://www.scala-lang.org/api/2.13.0/scala/collection/immutable/LazyList.html) replaces `immutable.Stream`. `Stream` had different laziness behavior and is now deprecated.
+--
+
+<br>
+- Parallel collections are now a separate [module](https://github.com/scala/scala-parallel-collections).
+  - As a result, `GenSeq`, `GenTraversableOnce`, et al are gone.
+--
+  
+<br>
+- Seq is now an alias for `collection.immutable.Seq`
+  - Before, it was an alias for the possibly-mutable `collection.Seq`
+
+  
+---
+## Future
+Futures were internally redesigned:
+- Handling of `InterruptedException` and `RejectedExecutionException` is [improved](https://github.com/scala/scala/pull/6610)
+--
+
+<br>
+
+- Made the global `ExecutionContext` [“batched”](https://github.com/scala/scala/pull/7470)
+--
+
+- Added synchronous ["parasitic"](https://github.com/scala/scala/pull/7784) `ExecutionContext`
+---
+## String pattern matching
+```scala
+val date = "11-June-2019"
+```
+--
+in 2.12
+```scala
+val splitted = "11-June-2019".split("-")
+val day = splitted(0)
+val month = splitted(1)
+val year = splitted(2)
+```
+--
+in 2.13
+```scala
+val s"$day-$month-$year" = "11-June-2019"
+```
+---
+### pipe - tap
+
+- These chaining operations are available via `import scala.util.chaining._`
+<br>
+
+- Example: `3.pipe(_ * 5)` evaluates to 15
+- Example: `9.tap(println)` first prints 9, then returns it
+
+---
+
+### pipe - tap
+```scala
+def foo(list: List[Int]) =
+    list
+    .filter(_ <= 0)
+    .groupBy(_ % 10)
+    .mapValues(_.size)
+```
+--
+in 2.12
+```scala
+def foo(list: List[Int]) = {
+    val result1 = list.filter(_ <= 0)
+    println(result1)
+    val result2 = result1.groupBy(_ % 10)
+    println(result2)
+    val result3 = result2.mapValues(_.size)
+    println(result3)
+    result3
+  }
+  ```
+--
+  in 2.13
+  ```scala
+  def foo(list: List[Int]) =
+    list
+    .filter(_ <= 0).tap(println)
+    .groupBy(_ % 10).tap(println)
+    .mapValues(_.size).tap(println)
+  ```
+---
+## Underscores in numeric literals
+
+- Underscores can now be used as a spacer
+
+- Example: 1_000_000
+---
+## Migration
+
+--
+
+- Enable `-Xmigration` while upgrading to request migration advice from the compiler.
+--
+
+<br>
+
+- There is a scalafix [rule](https://github.com/scala/scala-collection-compat#collection213upgrade) which rewrites upgrades to the 2.13 collections
+--
+
+- There is a [migration guide](https://docs.scala-lang.org/overviews/core/collections-migration-213.html) for upgrading
+
+---
+## Where are we as AS24?
+
+--
+
+#### Already supporting 2.13:
+- toguru-scala-client
+- as24-culture
+- sbt-scalascout
+- identity-client-library
+- identity-jwt
+- as24-listing-taxonomy
+
+--
+<br>
+
+#### TODO:
+- as24-project-template
+- Migrating all projects (except the ones depend on Spark)
+
+---
+## Why is 2.13 particularly important?
+
+- See details [here](https://www.scala-lang.org/2019/12/18/road-to-scala-3.html)
+
+---
+class:  center, middle
+
+## Thank you for your attention :)
+
+## Any questions?
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
