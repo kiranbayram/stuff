@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PR Review Best Practices</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      img {
+        width: 80%;
+      }
+      .image-50 img { width: 50% }
+      .image-30 img { width: 30% }
+      .image-10 img { width: 10% }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-inline-code { 
+          background-color: #F0F0F0;
+          padding: 4px;
+          font-size: 16px;
+          border-radius: 2px;
+          }
+
+          .footnote {
+            margin-top: 100px;
+            font-size: 18px;
+            opacity: 0.7;
+          }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# PR Review Best Practices
+
+.footnote[
+Bayram Kiran
+
+Tech Lead @ Smyle User Acquisition
+]
+
+---
+class: center
+## **Extremes:** Chill, All Good
+.image-50[![Default-aligned image](https://memegenerator.net/img/instances/54885982.jpg)]
+
+- Approves PRs without understanding the motivation, context and details
+
+---
+## **Extremes:** To block it all
+![Default-aligned image](https://memegenerator.net/img/instances/81652004.jpg)
+
+- Gets involved with more PRs than he/she has time for
+
+- Doesn't compromise
+
+- Is picky about smaller style points which doesn't necessarily bring any value
+
+
+---
+## Make time for Reviews
+
+.image-50[![Default-aligned image](https://media.makeameme.org/created/you-want-a-a60u49.jpg)]
+
+- Make time in your daily schedule to review at least one medium/large sized PR
+
+- Check if there're open PRs to be reviewed before starting another task
+
+---
+## Understanding/Learning
+
+.image-30[![Default-aligned image](https://www.memecreator.org/static/images/memes/4782671.jpg)]
+
+- This is IMO, one of the mostly ignored step
+
+- Make sure to read the JIRA tickets and/or slack discussions to understand what we're trying to achieve
+
+- Feel free to take your time to understand/learn the technical parts which are involved in the PR
+
+- PR Reviews can be a great opportunity to learn about the product and tech stack
+
+
+---
+class: center
+## Praise the good parts of the PR
+
+![Default-aligned image](https://www.memesmonkey.com/images/memesmonkey/db/db66a2ac77525c888a725b29db2c704b.jpeg)
+---
+
+## Checkout the code and run it
+
+.image-10[![Default-aligned image](https://git-scm.com/images/logos/downloads/Git-Icon-Black.png)]
+- Make sure to checkout the PR branch 
+
+.image-10[![Default-aligned image](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/IntelliJ_IDEA_Icon.svg/1024px-IntelliJ_IDEA_Icon.svg.png)] .image-10[![Default-aligned image](https://logowik.com/content/uploads/images/visual-studio-code7642.jpg)]
+- Use your IDE to understand the changes easier and provide more accurate/concrete suggestions 
+
+.image-10[![Default-aligned image](https://cdn4.iconfinder.com/data/icons/single-width-stroke/24/oui-icons-40-512.png)] .image-10[![Default-aligned image](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Eo_circle_green_checkmark.svg/2048px-Eo_circle_green_checkmark.svg.png)]
+- Run and test the app to verify the behavior
+
+
+---
+## Be specific in your comments and provide reasons
+
+.image-50[![Default-aligned image](https://memegenerator.net/img/instances/61313520.jpg)]
+
+- Bad: `Let's remove this from here, otherwise it will cause problem`
+
+- Good: `Let's remove the input parameter fooParam from doSomething function, because we have some places (Link to place 1, link to place2) where we don't have access to fooParam value`
+
+---
+## Use the correct language
+
+.image-30[![Default-aligned image](https://memegenerator.net/img/instances/61765392.jpg)]
+
+- Use polite language
+      - `Could you please remove this because of bla bla?` instead of `Remove this`
+
+
+- Use open-ended questions instead of strong/opiniated statements
+      - `Hey, I see you used a couple variables here that were declared inline. Do you think we should do that, or declare them at the top of the function? It seems it would be easier to read that way, WDYT?`
+
+
+---
+## Approach PR author to talk/discuss in person
+
+.image-50[![Default-aligned image](https://memegenerator.net/img/instances/66198775.jpg)]
+
+- Feel free to approach the PR author to discuss the PR, changes, suggestions in person if asyncronous communication gets blocked or asynchronous
+
+---
+class: center, middle
+## Thank you for your attention :)
+
+## Any questions?
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
